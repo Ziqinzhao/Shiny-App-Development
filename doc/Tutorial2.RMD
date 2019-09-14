@@ -3,9 +3,11 @@ title: 'Tutorial 2: EDAV using shiny'
 author: "Tian Zheng"
 date: "September 18, 2018"
 output:
-  slidy_presentation: default
-  ioslides_presentation: default
+  html_document:
+    df_print: paged
 ---
+
+This notebook processes a small set of data for a toy shiny app.
 
 ## Set gloabl options
 ```{r global_options, include=T}
@@ -33,7 +35,7 @@ library(lubridate)
 
 ## Install shiny
 ```{r install_shiny, eval=F}
-install.packages("shiny")
+if (!require("shiny")) install.packages("shiny")
 library(shiny)
 runExample("01_hello")
 ```
@@ -93,8 +95,9 @@ zip_choropleth(count.df,
 ```
 
 ## Geocode addresses 
-We can obtain more geo information about individual sales.
-```{r geo_codes, message=F}
+We can obtain more geo information about individual sales. You would need to sign up on Google Cloud to use the Geocoding API. Type `?register_google` in RStudio and follow the steps. 
+
+```{r geo_codes, message=F, warning=F}
 library(ggmap)
 library(dplyr)
 mh2009.selgeo=
