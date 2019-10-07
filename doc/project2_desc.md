@@ -16,6 +16,7 @@ The following topics/datasets are **excluded** as they have been over-analyzed b
 + NYC/Transportation (such as traffic accidents, taxi, citi bike, etc)
 + Electric cars
 + WIFI hotspots
++ Airlines
 
 Here are a few **suggested** topics but you should feel free not to use any of these. 
 
