@@ -22,8 +22,9 @@ library(revgeo)
 ```{r}
 data<-read_csv("crimeNYC2019.csv")
 crime<-data%>%
-  select(ARREST_DATE,ARREST_BORO,Latitude,Longitude)%>%
   mutate(index=row_number())%>%
+  select(index,ARREST_DATE,ARREST_BORO,Longitude,Latitude)%>%
+  rename(Date=ARREST_DATE,Area=ARREST_BORO)%>%
   drop_na()
 save(crime, file="crime.Rdata")
 
@@ -36,12 +37,14 @@ save(crime, file="crime.Rdata")
 ```{r}
 data2<-read_csv("School_Locations.csv")
 school<-data2%>%
-  select(location_type_description,Location_Category_Description,
-         LONGITUDE,LATITUDE)%>%
+  filter(Status_descriptions=="Open")%>%
   mutate(index=row_number())%>%
+  select(index,location_type_description,Location_Category_Description,
+         primary_address_line_1,LONGITUDE,LATITUDE)%>%
+  rename(Type=location_type_description,Category=Location_Category_Description,
+         address=primary_address_line_1,Latitude=LATITUDE,Longitude=LONGITUDE)%>%
   drop_na()
 save(school, file="school.Rdata")
-
 #school_zip<-revgeo(school$LONGITUDE,school$LATITUDE,output='frame')%>%
   #mutate(index=row_number())%>%
   #left_join(school,by="index")%>%
