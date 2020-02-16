@@ -1,0 +1,51 @@
+---
+title: "Data_cleaning"
+author: "Ziqin Zhao"
+date: "2/16/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(readr)
+library(tidyverse)
+library(ggmap)
+library(choroplethr)
+library(revgeo)
+```
+
+
+```{r}
+data<-read_csv("crimeNYC2019.csv")
+crime<-data%>%
+  select(ARREST_DATE,ARREST_BORO,Latitude,Longitude)%>%
+  mutate(index=row_number())%>%
+  drop_na()
+save(crime, file="crime.Rdata")
+
+#crime_zip<-revgeo(crime$Longitude,crime$Latitude,output = # 'frame')%>%mutate(index=row_number())%>%left_join(crime,by="index")%>%
+  #select(ARREST_DATE,ARREST_BORO,zip,Latitude,Longitude)
+
+
+```
+
+```{r}
+data2<-read_csv("School_Locations.csv")
+school<-data2%>%
+  select(location_type_description,Location_Category_Description,
+         LONGITUDE,LATITUDE)%>%
+  mutate(index=row_number())%>%
+  drop_na()
+save(school, file="school.Rdata")
+
+#school_zip<-revgeo(school$LONGITUDE,school$LATITUDE,output='frame')%>%
+  #mutate(index=row_number())%>%
+  #left_join(school,by="index")%>%
+  #select(location_type_description,Location_Category_Description,zip,LONGITUDE,LATITUDE)
+
+```
+
