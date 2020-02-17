@@ -21,12 +21,27 @@ library(revgeo)
 
 ```{r}
 data<-read_csv("crimeNYC2019.csv")
-crime<-data%>%
-  mutate(index=row_number())%>%
-  select(index,ARREST_DATE,ARREST_BORO,Longitude,Latitude)%>%
-  rename(Date=ARREST_DATE,Area=ARREST_BORO)%>%
-  drop_na()
-save(crime, file="crime.Rdata")
+crime_mahattan<-data%>%
+  rename(Date=ARREST_DATE,Area=ARREST_BORO,Crime_type=OFNS_DESC)%>%
+  drop_na()%>%
+  filter(Area=="M",str_detect(Crime_type,c("ASSAULT","WEAPONS","ROBBERY","MURDER","RAPE",
+                                                     "KIDNAPPING","PETIT LARCENY","GRAND LARCENY",
+                                           "DRUGS","SEX")))%>% 
+  
+  select(Date,Crime_type,Longitude,Latitude)%>%
+  mutate(Crime_type=str_replace_all(Crime_type,"RAPE","SEX CRIMES"),
+         Crime_type=str_replace_all(Crime_type,"PETIT LARCENY","LARCENY"),
+         Crime_type=str_replace_all(Crime_type,"GRAND LARCENY","LARCENY"),
+         Crime_type=str_replace_all(Crime_type,"GRAND LARCENY OF MOTOR VEHICLE","LARCENY"),
+         Crime_type=str_replace_all(Crime_type,"LARCENY OF MOTOR VEHICLE","LARCENY"),
+         Crime_type=str_replace_all(Crime_type,"ASSAULT 3 & RELATED OFFENSES","ASSAULT"),
+         Crime_type=str_replace_all(Crime_type,"FELONY ASSAULT","ASSAULT"),
+         Crime_type=str_replace_all(Crime_type,"MURDER & NON-NEGL. MANSLAUGHTE","MURDER"),
+         Crime_type=str_replace_all(Crime_type,"KIDNAPPING & RELATED OFFENSES","KIDNAPPING"))
+crime_mahattan
+
+
+save(crime, file="crime_mahattan.Rdata")
 
 #crime_zip<-revgeo(crime$Longitude,crime$Latitude,output = # 'frame')%>%mutate(index=row_number())%>%left_join(crime,by="index")%>%
   #select(ARREST_DATE,ARREST_BORO,zip,Latitude,Longitude)
