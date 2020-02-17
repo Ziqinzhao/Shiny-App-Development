@@ -41,10 +41,14 @@ crime_mahattan<-data%>%
 crime_mahattan
 
 
-save(crime, file="crime_mahattan.Rdata")
+save(crime_mahattan, file="crime_mahattan.Rdata")
 
-#crime_zip<-revgeo(crime$Longitude,crime$Latitude,output = # 'frame')%>%mutate(index=row_number())%>%left_join(crime,by="index")%>%
-  #select(ARREST_DATE,ARREST_BORO,zip,Latitude,Longitude)
+#crime_mahattan%>%mutate(index=row_number())
+
+#revgeo(crime_mahattan$Longitude,crime_mahattan$Latitude,output ='frame')%>%
+ # mutate(index=row_number())%>%
+  #left_join(crime_mahattan,by="index")%>%
+  #select(Date,Crime_type,zip,Latitude,Longitude)
 
 
 ```
