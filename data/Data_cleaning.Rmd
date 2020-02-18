@@ -47,38 +47,84 @@ crime_mahattan<-data%>%
 
 #save(crime_mahattan, file="crime_mahattan.Rdata")
 
+load("crime-mahattan-geo-info.RData")
+crime_mahattan_geo_info<-crime_mahattan_geo_info%>%
+  filter(zip!="83",
+         zip!="Postcode Not Found",
+         zip!="100",
+         zip!="100014")%>%
+  mutate(zip=str_replace_all(zip,"NY ",""),
+         zip=substr(zip,1,5))
+
+save(crime_mahattan_geo_info, file="crime_mahattan.Rdata")
+load("crime_mahattan.Rdata")
+crime_mahattan_geo_info
 
 
-#revgeo(crime_mahattan$Longitude,crime_mahattan$Latitude,output ='frame')%>%
- # mutate(index=row_number())%>%
-  #left_join(crime_mahattan,by="index")%>%
-  #select(Date,Crime_type,zip,Latitude,Longitude)
 
 
 ```
 
 ```{r}
-data2<-read_csv("School_Locations.csv")
-school<-data2%>%
-  filter(Status_descriptions=="Open")%>%
-  mutate(index=row_number())%>%
-  select(index,location_type_description,Location_Category_Description,
-         primary_address_line_1,LONGITUDE,LATITUDE)%>%
-  rename(Type=location_type_description,Category=Location_Category_Description,
-         address=primary_address_line_1,Latitude=LATITUDE,Longitude=LONGITUDE)%>%
-  drop_na()
+library(geosphere)
+distHaversine(c(-73.9705912,40.7930732), c(-73.9679734,40.7928133), r=6378137)
+load("../output/housing.RData")
 
-#save(school, file="school.Rdata")
-#school_zip<-revgeo(school$LONGITUDE,school$LATITUDE,output='frame')%>%
-  #mutate(index=row_number())%>%
-  #left_join(school,by="index")%>%
-  #select(location_type_description,Location_Category_Description,zip,LONGITUDE,LATITUDE)
+hou<-housing%>%
+  mutate(house_id=row_number())%>%
+  rename("house_Longitude"="Longitude","house_Latitude"="Latitude")
+cri<-crime_mahattan%>%
+  mutate(crime_id=row_number())%>%
+  rename("crime_Longitude"="Longitude","crime_Latitude"="Latitude")
+
+n=length(hla)
+hla=hou$house_Latitude
+hlo=hou$house_Longitude
+
+m<-length(cla)
+cla=cri$crime_Latitude
+clo=cri$crime_Longitude
+m<-length(cla)
+
+index<-NULL
+
+for(i in 1:n){
+  for(j in 1:m){
+    dist<-distHaversine(c(hlo[i],hla[i]),c(clo[j],cla[j]),r=6378137)  
+    if(dist<500) index<-rbind(index,tibble(school_id=i,crime_id=j))   
+  }
+}
+dataset<-index%>%left_join(cri)%>%
+  group_by(crime_id)%>%
+  nest(crime_data=-house_id)%>%
+  right_join(hou)
+
+
+
+
+
+
+
 
 ```
+
+
 ```{r}
-load("../data/park_NYC_new.RData")
+load("restaurant.RData")
+restaurant<-newdata%>%filter(BORO=="Manhattan",
+                             GRADE %in% c("A","B","C"))%>%
+  rename(TYPE=CUISINE.DESCRIPTION)%>%
+  select(DBA,ZIPCODE,TYPE,GRADE,Latitude,Longitude)%>%group_by(GRADE)%>%count()
+restaurant
+```
+
+
+```{r}
+load("park_NYC_new.RData")
 park_new
-load("../data/restaurant.RData")
-newdata
+```
+
+```{r}
+
 ```
 
