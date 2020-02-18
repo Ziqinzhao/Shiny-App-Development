@@ -37,13 +37,9 @@ crime_mahattan<-data%>%
          Crime_type=str_replace_all(Crime_type,"ASSAULT 3 & RELATED OFFENSES","ASSAULT"),
          Crime_type=str_replace_all(Crime_type,"FELONY ASSAULT","ASSAULT"),
          Crime_type=str_replace_all(Crime_type,"MURDER & NON-NEGL. MANSLAUGHTE","MURDER"),
-         Crime_type=str_replace_all(Crime_type,"KIDNAPPING & RELATED OFFENSES","KIDNAPPING"))%>%mutate(index=row_number())
+         Crime_type=str_replace_all(Crime_type,"KIDNAPPING & RELATED OFFENSES","KIDNAPPING"))
 
-    geo_info<-revgeo(crime_mahattan$Longitude,crime_mahattan$Latitude,output ='frame')%>%
-    mutate(index=row_number())
-    
-    geo_info%>%left_join(crime_mahattan%>%mutate(index=row_number()) ,by="index")%>%
-    select(Date,Crime_type,zip,Latitude,Longitude)
+
 
 #save(crime_mahattan, file="crime_mahattan.Rdata")
 
@@ -73,27 +69,31 @@ load("../output/housing.RData")
 hou<-housing%>%
   mutate(house_id=row_number())%>%
   rename("house_Longitude"="Longitude","house_Latitude"="Latitude")
-cri<-crime_mahattan%>%
+cri<-crime_mahattan_geo_info%>%
   mutate(crime_id=row_number())%>%
   rename("crime_Longitude"="Longitude","crime_Latitude"="Latitude")
 
-n=length(hla)
+
 hla=hou$house_Latitude
 hlo=hou$house_Longitude
+n=length(hla)
 
-m<-length(cla)
 cla=cri$crime_Latitude
 clo=cri$crime_Longitude
 m<-length(cla)
 
-index<-NULL
 
-for(i in 1:n){
-  for(j in 1:m){
-    dist<-distHaversine(c(hlo[i],hla[i]),c(clo[j],cla[j]),r=6378137)  
-    if(dist<500) index<-rbind(index,tibble(school_id=i,crime_id=j))   
+index<-NULL
+for(i in 1:5){
+  crime_amount=0
+  for(j in 1:5){
+    dist<-distHaversine(c(hlo[i],hla[i]),c(clo[j],cla[j]),r=6378137)
+    if(!is.na(dist))if(dist<800)  crime_amount<-crime_amount+1
   }
+  index<-rbind(index,tibble(house_id=i,crime_amount=crime_amount))
 }
+
+index
 dataset<-index%>%left_join(cri)%>%
   group_by(crime_id)%>%
   nest(crime_data=-house_id)%>%
@@ -114,7 +114,7 @@ load("restaurant.RData")
 restaurant<-newdata%>%filter(BORO=="Manhattan",
                              GRADE %in% c("A","B","C"))%>%
   rename(TYPE=CUISINE.DESCRIPTION)%>%
-  select(DBA,ZIPCODE,TYPE,GRADE,Latitude,Longitude)%>%group_by(GRADE)%>%count()
+  select(DBA,ZIPCODE,TYPE,GRADE,Latitude,Longitude)
 restaurant
 ```
 
@@ -126,5 +126,13 @@ park_new
 
 ```{r}
 
+restaurant_manhattan_new<-restaurant_unique_manhattan%>%
+  filter(BORO=="Manhattan")%>%
+  filter(GRADE %in% c("A","B","C"))%>%
+  select(DBA,ZIPCODE,GRADE,Latitude,Longitude)
+
+restaurant_manhattan_new
+
+save(restaurant_manhattan_new,file="../output/restaurant_manhattan_new.RData")
 ```
 
