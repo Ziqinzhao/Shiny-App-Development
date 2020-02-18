@@ -1,0 +1,95 @@
+---
+title: "Data Cleaning"
+author: "Xiyao Yan(xy2431)"
+date: "2020/2/16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+setwd("D:/哥伦比亚/GR5243/HW2")
+library(tidyverse)
+library(purrr)
+```
+
+
+```{r Parks}
+park<-read.csv("Parks.csv",header = T)
+#Dealing with location
+##split longitude and latitude
+location_remove<-function(s){
+  s<-str_remove(s,fixed("MULTIPOLYGON ((("))
+  s<-str_remove_all(s,"\\)")
+  s<-str_remove_all(s,"\\(")
+  s<-str_split(s,", ")
+  return(s)
+}
+
+location_average<-function(L){
+  L<-unlist(L)
+  L<-map(L,~str_split(.x," "))
+  L<-as.numeric(unlist(L))
+  L<-t(array(L,c(2,length(L)/2)))
+  mean<-apply(L,2,mean,na.rm = T)
+  return(list(longitude = mean[1],
+              latitude = mean[2]))
+}
+
+
+park_new<-park%>%
+  select(NAME311,the_geom,LOCATION,ZIPCODE,BOROUGH,ACRES,WATERFRONT,TYPECATEGO)
+
+location<-park_new%>%
+  select(the_geom)%>%
+  mutate("LL" = map(the_geom,location_remove),
+         "LL_average" = map(LL,location_average))
+
+park_new<-left_join(park_new,location,by = "the_geom")%>%
+  mutate("Longitude_average" = map_dbl(LL_average,~unlist(.x)[1]),
+         "Latitdue_average" = map_dbl(LL_average,~unlist(.x)[2]))%>%
+  select(-LL,-LL_average)%>%
+  mutate("radius" = sqrt(ACRES/0.00024711))
+
+park_new<-park_new%>%
+  filter(BOROUGH == "M")
+
+save(park_new,file = "park_NYC_new.Rdata")
+```
+
+```{r traffic}
+subway<-read.csv("subway station_NYC.csv",header = T)
+LL_change<-function(s){
+  s<-as.character(s)
+  s<-str_remove(s,"POINT ")
+  s<-str_remove(s,fixed("("))
+  s<-str_remove(s,fixed(")"))
+  s<-str_split(s," ")
+  s<-as.numeric(unlist(s))
+  return(s)
+}
+
+#position
+subway_new<-subway%>%
+  select(-c(1:2))%>%
+  mutate("LL" = map(the_geom,LL_change))
+
+longitude<-c()
+latitude<-c()
+for (i in 1:473) {
+  longitude[i]<-subway_new$LL[[i]][1]
+  latitude[i]<-subway_new$LL[[i]][2]
+}
+
+subway_new<-cbind(subway_new,longitude,latitude)%>%
+  select(-LL)
+
+#number of lines
+subway_new<-subway_new%>%
+  mutate("count" = map_dbl(str_split(as.character(LINE),"-"),length))
+
+save(park_new,file = "subway_station_NYC_new.Rdata")
+```
+
+```{r}
+bus<-read.table("stops1.txt",header = T,sep = ",")
+save(bus,file = "bus_station_NYC_new.Rdata")
+```
