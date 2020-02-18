@@ -1,42 +1,54 @@
-library(shiny)
-library(leaflet)
 
-# Define UI for application that draws a histogram
-shinyUI(fluidPage(
-  
-  # Application title
-  titlePanel("2009 Manhattan Housing Sales"),
-  
-  # Sidebar with a selector input for neighborhood
-  sidebarLayout(
-    sidebarPanel(
-      selectInput("nbhd", label = h5("Choose a Manhattan Neighborhood"), 
-                         choices = list("all neighborhoods"=0,
-                                        "Central Harlem"=1, 
-                                        "Chelsea and Clinton"=2,
-                                        "East Harlem"=3, 
-                                        "Gramercy Park and Murray Hill"=4,
-                                        "Greenwich Village and Soho"=5, 
-                                        "Lower Manhattan"=6,
-                                        "Lower East Side"=7, 
-                                        "Upper East Side"=8, 
-                                        "Upper West Side"=9,
-                                        "Inwood and Washington Heights"=10), 
-                         selected = 0)
-      #sliderInput("p.range", label=h3("Price Range (in thousands of dollars)"),
-      #            min = 0, max = 20000, value = c(200, 10000))
-    ),
-    # Show two panels
-    mainPanel(
-      #h4(textOutput("text")),
-      h3(code(textOutput("text1"))),
-      tabsetPanel(
-        # Panel 1 has three summary plots of sales. 
-        tabPanel("Sales summary", plotOutput("distPlot")), 
-        # Panel 2 has a map display of sales' distribution
-        tabPanel("Sales map", plotOutput("distPlot1"))),
-      leafletOutput("map", width = "80%", height = "400px")
-    )
- )
-))
+ui <- dashboardPage(skin = "blue",
+                    dashboardHeader(title = "Manhattan House Finder",titleWidth = 280),
+                    dashboardSidebar(sidebarMenu(
+                        menuItem("Introduction", tabName = "Introduction", icon = icon("home")),
+                        menuItem("Map", tabName = "Map", icon = icon("map")),
+                        menuItem("Details", tabName = "Details", icon = icon("search-location")),
+                        menuItem("Prediction and Recommandation", tabName = "Prediction & Recommandation", icon = icon("chart-line")),
+                        menuItem("Source", tabName = "Source", icon = icon("table"))
+                    ),
+                    width = 280),
+                    dashboardBody(
+                        tabItems(
+                            #introduction
+                            tabItem(tabName = "Introduction",
+                                    fluidPage(
+                                      fluidRow(
+                                        box(width = 12, title = "Introduction",status = "primary",
+                                            h4("NYC Shooting Crime Map")
+                                            )),
+                                      fluidRow(
+                                        box(width = 12, title = "User Guide",status = "primary",
+                                            h4("What Does This Map Do?")
+                                            )),
+                                      fluidRow(
+                                        box(width = 4, title = "User Guide",color = "blue",
+                                            solidHeader = TRUE, 
+                                            h4("What Does This Map Do?")),
+                                        box(width = 4, title = "User Guide",color = "blue",
+                                            solidHeader = TRUE, 
+                                            h4("What Does This Map Do?")),
+                                        box(width = 4, title = "User Guide",color = "blue",
+                                            solidHeader = TRUE, 
+                                            h4("What Does This Map Do?"))),
+                                      fluidRow(
+                                        img(src = "../background.jpg",width = 580))
+                                      )),
+                            #map
+                            tabItem(tabName = "Map",
+                                    ),
+                            
+                            #details
+                            tabItem(tabName = "Details",
+                                    ),
+                            
+                            #prediction and recommendation
+                            tabItem(tabName = "Prediction and Recommendation",
+                                    ),
+                            
+                            #data
+                            tabItem(tabName = "Data",
+                                    )
+                        )))
 
