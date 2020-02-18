@@ -37,13 +37,17 @@ crime_mahattan<-data%>%
          Crime_type=str_replace_all(Crime_type,"ASSAULT 3 & RELATED OFFENSES","ASSAULT"),
          Crime_type=str_replace_all(Crime_type,"FELONY ASSAULT","ASSAULT"),
          Crime_type=str_replace_all(Crime_type,"MURDER & NON-NEGL. MANSLAUGHTE","MURDER"),
-         Crime_type=str_replace_all(Crime_type,"KIDNAPPING & RELATED OFFENSES","KIDNAPPING"))
-crime_mahattan
+         Crime_type=str_replace_all(Crime_type,"KIDNAPPING & RELATED OFFENSES","KIDNAPPING"))%>%mutate(index=row_number())
+
+    geo_info<-revgeo(crime_mahattan$Longitude,crime_mahattan$Latitude,output ='frame')%>%
+    mutate(index=row_number())
+    
+    geo_info%>%left_join(crime_mahattan%>%mutate(index=row_number()) ,by="index")%>%
+    select(Date,Crime_type,zip,Latitude,Longitude)
+
+#save(crime_mahattan, file="crime_mahattan.Rdata")
 
 
-save(crime_mahattan, file="crime_mahattan.Rdata")
-
-#crime_mahattan%>%mutate(index=row_number())
 
 #revgeo(crime_mahattan$Longitude,crime_mahattan$Latitude,output ='frame')%>%
  # mutate(index=row_number())%>%
@@ -63,11 +67,18 @@ school<-data2%>%
   rename(Type=location_type_description,Category=Location_Category_Description,
          address=primary_address_line_1,Latitude=LATITUDE,Longitude=LONGITUDE)%>%
   drop_na()
-save(school, file="school.Rdata")
+
+#save(school, file="school.Rdata")
 #school_zip<-revgeo(school$LONGITUDE,school$LATITUDE,output='frame')%>%
   #mutate(index=row_number())%>%
   #left_join(school,by="index")%>%
   #select(location_type_description,Location_Category_Description,zip,LONGITUDE,LATITUDE)
 
+```
+```{r}
+load("../data/park_NYC_new.RData")
+park_new
+load("../data/restaurant.RData")
+newdata
 ```
 
