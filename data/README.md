@@ -7,3 +7,4 @@ All the original data can be downloaded as below:
   + Parks: https://data.cityofnewyork.us/City-Government/Parks-Properties/k2ya-ucmv#revert
   + traffic-subway:https://data.cityofnewyork.us/Transportation/Subway-Stations/arq3-7z49
   + traffic-bus:http://web.mta.info/developers/developer-data-terms.html#data
+  + Retail data: https://data.ny.gov/Economic-Development/Retail-Food-Stores/9a8c-vfzj
