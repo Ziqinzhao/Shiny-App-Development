@@ -1,0 +1,52 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Loading the Data
+nrow(retail)
+```{r echo=FALSE, message=FALSE}
+setwd("/Users/marsyachairuna/Documents/2019 Spring Applied Analytics/Applied Data Science/Spring2020-Project2-group3/data/")
+retail = read.csv("Retail_Food_Stores.csv")
+variable.names(retail)
+library(dplyr)
+library(tidyr)
+library(janitor)
+manhattan_zipcode <- c('10026','10027','10030','10037',	'10075','10001',	'10011',	'10018',	'10019', '10040','10029','10035','10036','10020','10128','10010','10016','10017','10022','10012','10013','10014',	'10039','10004','10005','10006','10007','10002','10003','10009','10038','10021','10028','10044',	'10065','10023','10024','10025','10280','10031','10032','10033','10034')
+
+retail_manhattan <- retail %>% select(DBA.Name, Zip.Code, Square.Footage, Location) %>% filter(Zip.Code %in% manhattan_zipcode) %>% filter(!Square.Footage == 0)  # only include manhattan & delete observation with 0 square footage 
+
+# check missing values
+colSums(is.na(retail_manhattan))
+```
+
+```{r echo=FALSE, message=FALSE}
+# Sort by Square Feet 
+retail_manhattan$Square.Footage <- as.numeric(retail_manhattan$Square.Footage)
+
+summary_squareft <- retail_manhattan %>%
+  group_by(DBA.Name) %>%
+  summarize(mean_squareft = mean(Square.Footage)) %>%
+  arrange(desc(mean_squareft))
+
+```
+
+```{r echo=FALSE, message=FALSE}
+# only include percentile 25 and above
+retail_manhattan2 <- subset(retail_manhattan, Square.Footage >= 81)
+
+# only include unique location 
+retail_manhattan3 <- retail_manhattan2[!duplicated(retail_manhattan2$Location),]
+
+# add grocery size
+retail_manhattan4 <- retail_manhattan3 %>% 
+   mutate(Size = case_when(Square.Footage >= 633.0 ~ 'Large',
+                                  Square.Footage >= 322.0 ~ 'Medium',
+                                  TRUE ~ 'Small'))
+# add latitude longitude
+retail_new <- retail_manhattan4 %>% separate(Location, c("Street","City","LatLong"), sep = "\n") %>% select(DBA.Name, Zip.Code, Square.Footage, Size, LatLong) %>% extract(LatLong, c("Latitude", "Longitude"), "\\(([^,]+), ([^)]+)\\)")
+
+save(retail_new, file = "retail_new.RData")
+
+```
+

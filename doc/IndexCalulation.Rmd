@@ -19,6 +19,7 @@ load('../output/school.RData')
 load('../output/park_NYC_new.RData')
 load('../output/subway_station_NYC_new.RData')
 load('../output/noise.RData')
+load('../output/retail.RData')
 
 # before ggmap issues being conquered, missing values are omitted
 hous<-housing%>%na.omit()
@@ -30,6 +31,7 @@ load('../output/parkdist.RData')
 load('../output/subwaydist.RData')
 load('../output/crimedist.RData')
 crimedist<-dist
+load('../output/retaildist.RData')
 
 # global variable
 n<-nrow(hous)
@@ -87,14 +89,24 @@ noise_by_dist<-function(p){
 }
 
 # bus index
-# restaurant
-# retail
+
+# restaurant index
+
+# retail index
+retail_by_dist<-function(p){
+  index8<-c()
+  for(i in 1:n){
+    index8[i]<-sum(retaildist[i,]<p)
+  }
+  return(index8)
+}
 
 # if p = 800 m
 school_score<-school_by_dist(800)
 park_score<-park_by_dist(800)
 subway_score<-subway_by_dist(800)
 crime_score<-crime_by_dist(800)
+retail_score<-retail_by_dist(800)
 
 index<-tibble(`SALE PRICE`=hous$`SALE PRICE`,
                     `ADDRESS`=hous$ADDRESS,
@@ -103,14 +115,15 @@ index<-tibble(`SALE PRICE`=hous$`SALE PRICE`,
                     `SCHOOL NEARBY`=school_score,
                     `PARK NEARBY`=park_score,
                     `SUBWAY NEARBY`=subway_score,
-                    `CRIME NEARBY`=crime_score)
+                    `CRIME NEARBY`=crime_score,
+                    `RETAIL NEARBY`=retail_score,)
 save(dist, file="../output/index.RData")
 
 ```
 
 
 ```{r}
-# returning index (so they can be relatde to different datasets)
+# returning index (so they can be related to different datasets)
 # especially for important information
 
 # school
