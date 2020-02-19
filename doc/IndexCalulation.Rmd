@@ -1,0 +1,129 @@
+---
+title: "Index and Score Calculating"
+output: html_notebook
+---
+
+```{r include=FALSE}
+library(geosphere)
+library(tibble)
+library(dplyr)
+library(tidyr)
+```
+
+
+```{r}
+# load datasets, we should have:
+# 1.Housing 2.School 3.Park 4.Subway 5.Crime 6.Noise 7.Bus 8.Restaurant 9.Retail
+load('../output/housing.RData') 
+load('../output/school.RData')
+load('../output/park_NYC_new.RData')
+load('../output/subway_station_NYC_new.RData')
+load('../output/noise.RData')
+
+# before ggmap issues being conquered, missing values are omitted
+hous<-housing%>%na.omit()
+
+# Please pay attention to the matrix name, don't name them the same
+load('../output/schooldist.RData')
+schooldist<-dist
+load('../output/parkdist.RData')
+load('../output/subwaydist.RData')
+load('../output/crimedist.RData')
+crimedist<-dist
+
+# global variable
+n<-nrow(hous)
+```
+
+
+```{r}
+# Define a function to change the radius (units: m). So that the radius can be changed in the shinny app
+
+# school index
+school_by_dist<-function(p){
+  index1<-c()
+  for(i in 1:n){
+    index1[i]<-sum(schooldist[i,]<p)
+  }
+  return(index1)
+}
+
+# park index
+radius<-sqrt((park_new$ACRES)*4046.856)
+park_by_dist<-function(p){
+  index2<-c()
+  for(i in 1:n){
+    index2[i]<-sum((dist_park[i,]-radius)<p)
+  }
+  return(index2)
+}
+
+# subway index
+subway_by_dist<-function(p){
+  index3<-c()
+  score3<-ifelse(dist_subway<p,1,0)
+  for(i in 1:n){
+    index3[i]<-sum(score3[i,]*c(subway_new$count))
+  }
+  return(index3)
+}
+
+# crime index
+crime_by_dist<-function(p){
+  index4<-c()
+  for(i in 1:n){
+    index4[i]<-sum(crimedist[i,]<p)
+  }
+  return(index4)
+}
+
+# noise index
+noise_by_dist<-function(p){
+  index5<-c()
+  for(i in 1:n){
+    index5[i]<-sum(noisedist[i,]<p)
+  }
+  return(index5)
+}
+
+# bus index
+# restaurant
+# retail
+
+# if p = 800 m
+school_score<-school_by_dist(800)
+park_score<-park_by_dist(800)
+subway_score<-subway_by_dist(800)
+crime_score<-crime_by_dist(800)
+
+index<-tibble(`SALE PRICE`=hous$`SALE PRICE`,
+                    `ADDRESS`=hous$ADDRESS,
+                    `Latitude`=hous$Latitude,
+                    `Longtitude`=hous$Longitude,
+                    `SCHOOL NEARBY`=school_score,
+                    `PARK NEARBY`=park_score,
+                    `SUBWAY NEARBY`=subway_score,
+                    `CRIME NEARBY`=crime_score)
+save(dist, file="../output/index.RData")
+
+```
+
+
+```{r}
+# returning index (so they can be relatde to different datasets)
+# especially for important information
+
+# school
+school_detect<-function(p){
+  ind1<-list()
+  for(i in 1:n){
+    ind1[[i]]<-which(schooldist[i,]<p)
+  }
+  return(ind1)
+}
+
+
+```
+
+
+
