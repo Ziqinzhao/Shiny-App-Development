@@ -137,4 +137,7 @@ save(restaurant_manhattan_new,file="../output/restaurant_manhattan_new.RData")
 ```
 
 
+```{r}
+housing<-hous%>%na.omit()
+```
 
