@@ -19,7 +19,9 @@ load('../output/school.RData')
 load('../output/park_NYC_new.RData')
 load('../output/subway_station_NYC_new.RData')
 load('../output/noise.RData')
-load('../output/retail.RData')
+load('../output/bus_station_NYC_new.RData')
+load('../output/res_manhattan_new.RData')
+load('../output/retail_new.RData')
 
 # before ggmap issues being conquered, missing values are omitted
 hous<-housing%>%na.omit()
@@ -31,10 +33,22 @@ load('../output/parkdist.RData')
 load('../output/subwaydist.RData')
 load('../output/crimedist.RData')
 crimedist<-dist
+load('../output/busdist.RData')
+load('../output/resdist.RData')
 load('../output/retaildist.RData')
+
+
 
 # global variable
 n<-nrow(hous)
+
+
+# Some Modification
+# retailindex<-retail_new%>%mutate(index=row_number())%>%filter(is.na(Latitude))
+# retailindex<-c(retailindex$index)
+# retaildist<-retaildist[,-retailindex]
+# save(retaildist,file='../output/retaildist.RData')
+# load('../output/retaildist.RData')
 ```
 
 
@@ -80,23 +94,100 @@ crime_by_dist<-function(p){
 }
 
 # noise index
-noise_by_dist<-function(p){
-  index5<-c()
+# load('../output/noisedist1.RData')
+# load('../output/NoiseDist2.RData')
+# load('../output/NoiseDist3.RData')
+# load('../output/NoiseDist4.RData')
+# load('../output/NoiseDist5.RData')
+# load('../output/NoiseDist6.RData')
+# load('../output/NoiseDist7.RData')
+# load('../output/NoiseDist8.RData')
+# load('../output/NoiseDist9.RData')
+# load('../output/NoiseDist10.RData')
+# noise_by_dist<-function(p){
+#   index5<-c()
+#   n1<-nrow(output1)
+#   for(i in 1:n1){
+#     index5[i]<-sum(output1[i,]<p)
+#   }
+#   n2<-nrow(output2)
+#   for(i in 1:n2){
+#     index5[n1+i]<-sum(output2[i,]<p)
+#   }
+#   n3<-nrow(output3)
+#   for(i in 1:n3){
+#     index5[n1+n2+i]<-sum(output3[i,]<p)
+#   }
+#   n4<-nrow(output4)
+#   for(i in 1:n4){
+#     index5[n1+n2+n3+i]<-sum(output4[i,]<p)
+#   }
+#   n5<-nrow(output5)
+#   for(i in 1:n5){
+#     index5[n1+n2+n3+n4+i]<-sum(output5[i,]<p)
+#   }
+#   n6<-nrow(output6)
+#   for(i in 1:n6){
+#     index5[n1+n2+n3+n4+n5+i]<-sum(output6[i,]<p)
+#   }
+#   n7<-nrow(output7)
+#   for(i in 1:n7){
+#     index5[n1+n2+n3+n4+n5+n6+i]<-sum(output7[i,]<p)
+#   }
+#   n8<-nrow(output8)
+#   for(i in 1:n8){
+#     index5[n1+n2+n3+n4+n5+n6+n7+i]<-sum(output8[i,]<p)
+#   }
+#   n9<-nrow(output9)
+#   for(i in 1:n9){
+#     index5[n1+n2+n3+n4+n5+n6+n7+n8+i]<-sum(output9[i,]<p)
+#   }
+#   n10<-nrow(output10)
+#   for(i in 1:n10){
+#     index5[n1+n2+n3+n4+n5+n6+n7+n8+n9+i]<-sum(output10[i,]<p)
+#   }
+#   return(index5)
+# }
+# 
+# # bus index
+bus_by_dist<-function(p){
+  index6<-c()
   for(i in 1:n){
-    index5[i]<-sum(noisedist[i,]<p)
+    index6[i]<-sum(dist_bus[i,]<p)
   }
-  return(index5)
+  return(index6)
 }
 
-# bus index
+# restaurant
+weight7<-restaurant_manhattan_new1$GRADE
+weight7[weight7=="A"]<-1
+weight7[weight7=="B"]<-0.6
+weight7[weight7=="C"]<-0.2
+weight7<-as.numeric(weight7)
+res_by_dist<-function(p){
+  index7<-c()
+  score7<-ifelse(dist_res<p,1,0)
+  for(i in 1:n){
+    index7[i]<-sum(score7[i,]*c(weight7))
+  }
+  return(index7)
+}
 
-# restaurant index
+# retail
+# transformation
+retail<-retail_new%>%na.omit()
+weight8<-retail$Size
+weight8[weight8=="Large"]<-1
+weight8[weight8=="Medium"]<-0.5
+weight8[weight8=="Small"]<-0.1
+weight8<-as.numeric(weight8)
 
-# retail index
+reatil<-retail_new%>%na.omit()
 retail_by_dist<-function(p){
   index8<-c()
+  score8<-ifelse(retaildist<p,1,0)
   for(i in 1:n){
-    index8[i]<-sum(retaildist[i,]<p)
+    index8[i]<-sum(score8[i,]*c(weight8))
   }
   return(index8)
 }
@@ -106,6 +197,10 @@ school_score<-school_by_dist(800)
 park_score<-park_by_dist(800)
 subway_score<-subway_by_dist(800)
 crime_score<-crime_by_dist(800)
+load('../output/index5.RData')
+noise_score<-index5
+bus_score<-bus_by_dist(800)
+restaurant_score<-res_by_dist(800)
 retail_score<-retail_by_dist(800)
 
 index<-tibble(`SALE PRICE`=hous$`SALE PRICE`,
@@ -116,17 +211,20 @@ index<-tibble(`SALE PRICE`=hous$`SALE PRICE`,
                     `PARK NEARBY`=park_score,
                     `SUBWAY NEARBY`=subway_score,
                     `CRIME NEARBY`=crime_score,
-                    `RETAIL NEARBY`=retail_score,)
-save(dist, file="../output/index.RData")
+                    `NOISE NEARBY`= noise_score,
+                    `Bus NEARBY`=bus_score,
+                    `RESTAURANT NEARBY`=restaurant_score,
+                    `RETAIL NEARBY`=retail_score)
+save(index, file="../output/index.RData")
 
 ```
 
 
 ```{r}
-# returning index (so they can be related to different datasets)
+# returning index (so they can be relatde to different datasets)
 # especially for important information
 
-# school
+# school search
 school_detect<-function(p){
   ind1<-list()
   for(i in 1:n){
@@ -134,6 +232,20 @@ school_detect<-function(p){
   }
   return(ind1)
 }
+
+# park search
+
+# subway search
+
+# crime search
+
+# noise search
+
+# bus search
+
+# restaurant search
+
+# retail search
 
 
 ```

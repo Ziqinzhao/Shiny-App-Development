@@ -136,3 +136,5 @@ restaurant_manhattan_new
 save(restaurant_manhattan_new,file="../output/restaurant_manhattan_new.RData")
 ```
 
+
+
