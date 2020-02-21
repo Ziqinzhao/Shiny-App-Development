@@ -112,9 +112,55 @@ shinyUI(
                                             div(tableOutput("restaurant"), style = "font-size:45%")
                               )
                               )        
-                        )
+                        ),
                  
+                 tabPanel("Recommendation",
+                          fluidPage(
+                            fluidRow(
+                              column(6,
+                                     h1("Choose What You Like"))
+                                     ),
+                            
+                            fluidRow(
+                                     column(3,
+                                            sliderInput("Housing price", "Housing Price:",min = 850, max = 5400, value = 5400)),
+                                     column(3,
+                                            sliderInput("check2_ty", "House Size:",min = 850, max = 5400, value = 5400))),
+                            
+                            fluidRow(
+                              column(3,
+                                     selectInput("check2_re", "Restaurant Type:", c("Food I Like"="",list("Don't care", "American", "Chinese", "Italian", "Japanese", "Pizza", "Others")), multiple=TRUE)),
+                              column(3,
+                                     selectInput("check2_tr", "School Nearby:", list("Don't Care","Important!"))),
+                              column(3,
+                                     selectInput("check2_ma","Safety:",list("not important","safety is important!"))),
+                              
+                              column(3,
+                                     selectInput("Transportation","Transportation:",list("Don't care","Important")))
+                              ),
+                            
+                            
+                            fluidRow(
+                              column(3,
+                                     selectInput("check2_cb", "Retail & Market:", list("Just online shopping.","need markets nearby!"))),
+                              
+                              column(3,
+                                     selectInput("check2_ct", "Park:",list("not necessary","need to go to park everyday"))),
+                              column(3,
+                                     selectInput("check2_ma","Noise:",list("Don't matter","I want a quiet house!")))
+                          )
+                 )
       )
-  )
-)
+  )))
+                                
+                            
+           
+                   
+                   
+                 
+                 
+                 
+    
+
+
 
