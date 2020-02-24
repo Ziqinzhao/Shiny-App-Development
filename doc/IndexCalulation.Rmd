@@ -246,7 +246,7 @@ school_detect<-function(p){
 # restaurant search
 
 # retail search
-
+# The above similar steps can be achieved and modify the first functions, if necessary.
 
 ```
 
