@@ -129,7 +129,24 @@ shinyUI(
                                             div(tableOutput("school"), style = "font-size:60%")
                               )
                               )        
-                        )
+                        ),
+                 tabPanel("Evaluation",
+                          fluidPage(
+                            fluidRow(
+                            column(5,textInput("caption", "Search Google Maps", "50W 97th Street",width=600)),
+                            column(3,sliderInput("range", "Preferred Foot Square:",min = 436, max = 149560, value = c(40000,100000))),
+                            column(3,sliderInput("prange", "Price Interval:",min = 2500, max = 416100000, value = c(100000000,300000000)))
+                             ),
+                            h3("Index Evaluation:"),
+                            tableOutput("score"),
+                            h3("Similiar Houses:"),
+                            dataTableOutput("like"),
+                            h3("Nearest High Score Houses:"),
+                            dataTableOutput("near"),
+                            h3("Potential Houses:"),
+                            dataTableOutput("potential")
+                                  )
+                         )
                  
       )
   )
