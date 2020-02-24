@@ -9,7 +9,20 @@ library(geosphere)
 library(leaflet.extras)
 library(ggmap)
 library(shinyjs)
+install.packages("pracma")
+library(pracma)
 
+location_range<-function(lng,lat,distance=0.5){
+  earthRadius=6378.137    # unit: km
+  d_lng=2*asin(sin(distance/(2*earthRadius))/cos(deg2rad(lat)))
+  d_lng=rad2deg(d_lng)
+  d_lat=distance/earthRadius
+  d_lat=rad2deg(d_lat)
+  return(c(lat-d_lat,    # start of latitude
+           lat+d_lat,
+           lng-d_lng,    # start of longtitude
+           lng+d_lng))
+}
 
 
 pal <- colorNumeric("#666699",c(0,1), na.color = "#808080" )
@@ -201,7 +214,13 @@ shinyServer(function(input, output,session) {
         else hide("retail")
         if("School" %in% input$click_neighbourhood) show("school")
         else hide("school")
+<<<<<<< HEAD
       },ignoreNULL = FALSE) ,
+=======
+      },ignoreNULL = FALSE) 
+      
+>>>>>>> e8f2fb41d35ac34367e951a644e3dcbf8f2b236e
+      
       ## Evaluation
     observeEvent(c(input$caption,input$range,input$prange),{
       # obtaining the longitude and latitude of the address input
