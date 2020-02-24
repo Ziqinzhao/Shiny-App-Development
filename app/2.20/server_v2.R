@@ -201,7 +201,146 @@ shinyServer(function(input, output,session) {
         else hide("retail")
         if("School" %in% input$click_neighbourhood) show("school")
         else hide("school")
-      },ignoreNULL = FALSE) 
+      },ignoreNULL = FALSE) ,
+      ## Evaluation
+    observeEvent(c(input$caption,input$range,input$prange),{
+      # obtaining the longitude and latitude of the address input
+      range<-location_range(geocode(paste(input$caption,", New York"),source="google")$lon,
+                            geocode(paste(input$caption,", New York"),source="google")$lat)
+      output$score<-renderTable({
+      # school
+      school_score<-unlist(school%>%
+            filter(Latitude>range[1],Latitude<range[2],Longitude>range[3],Longitude<range[4])%>%
+            count())[[1]]
+      school_rank<-ceiling(100*min(which(sort(c(houseallinfo_neighbor$`SCHOOL NEARBY`,school_score),
+                                      decreasing = TRUE)
+                         ==school_score))/nrow(houseallinfo_neighbor))
+      
+      # park
+      park_score<-unlist(park_new%>%
+            filter(Latitude_average>range[1],Latitude_average<range[2],Longitude_average>range[3],Longitude_average<range[4])%>%
+            count())[[1]]
+      park_rank<-ceiling(100*min(which(sort(c(houseallinfo_neighbor$`PARK NEARBY`,park_score),
+                                            decreasing = TRUE)
+                                       ==park_score))/nrow(houseallinfo_neighbor))
+      
+      # subway
+      subway_score<-unlist(subway_new%>%
+            filter(latitude>range[1],latitude<range[2],longitude>range[3],longitude<range[4])%>%
+            summarize(n=sum(count)))[[1]]
+      subway_rank<-ceiling(100*min(which(sort(c(houseallinfo_neighbor$`SUBWAY NEARBY`,subway_score),
+                                          decreasing = TRUE)
+                                     ==subway_score))/nrow(houseallinfo_neighbor))
+      
+      # bus
+      bus_score<-unlist(bus%>%
+            filter(stop_lat>range[1],stop_lat<range[2],stop_lon>range[3],stop_lon<range[4])%>%
+            count())[[1]]
+      bus_rank<-ceiling(100*min(which(sort(c(houseallinfo_neighbor$`BUS NEARBY`,bus_score),
+                                            decreasing = TRUE)
+                                       ==bus_score))/nrow(houseallinfo_neighbor))
+      
+      # restaurant
+      res_score<-unlist(restaurant%>%
+            filter(Latitude>range[1],Latitude<range[2],Longitude>range[3],Longitude<range[4])%>%
+            mutate(GRADE=case_when(GRADE=="A" ~ 1,
+                                   GRADE=="B" ~ 0.6,
+                                   GRADE=="C" ~ 0.2))%>%
+           summarize(n=sum(GRADE)))[[1]]
+      res_rank<-ceiling(100*min(which(sort(c(houseallinfo_neighbor$`RESTAURANT NEARBY`,res_score),
+                                         decreasing = TRUE)
+                                    ==res_score))/nrow(houseallinfo_neighbor))
+      
+      # retail
+      retail_score<-unlist(retail%>%
+           mutate(Latitude=as.numeric(Latitude),
+                  Longitude=as.numeric(Longitude))%>%
+           filter(Latitude>range[1],Latitude<range[2],Longitude>range[3],Longitude<range[4])%>%                 
+           mutate(SCORE=case_when(Size=="Large" ~ 1,
+                                  Size=="Medium" ~ 0.5,
+                                  Size=="Small" ~ 0.1))%>%  
+           summarize(n=sum(SCORE)))[[1]]
+      retail_rank<-ceiling(100*min(which(sort(c(houseallinfo_neighbor$`RETAIL NEARBY`,retail_score),
+                                         decreasing = TRUE)
+                                    ==retail_score))/nrow(houseallinfo_neighbor))
+      
+      # crime
+      crime_score<-unlist(crime%>%
+           filter(Latitude>range[1],Latitude<range[2],Longitude>range[3],Longitude<range[4])%>%
+           count())[[1]]
+      crime_rank<-ceiling(100*min(which(sort(c(houseallinfo_neighbor$`CRIME NEARBY`,crime_score))
+                                       ==crime_score))/nrow(houseallinfo_neighbor))
+      
+      # noise
+      noise_score<-unlist(compliance2019%>%
+           filter(Latitude>range[1],Latitude<range[2],Longitude>range[3],Longitude<range[4])%>%
+           count())[[1]]
+      noise_rank<-ceiling(100*min(which(sort(c(houseallinfo_neighbor$`NOISE NEARBY`,noise_score))
+                                      ==noise_score))/nrow(houseallinfo_neighbor))
+      
+      # evaluate the 8 indexes aroud the address (radius=800m)
+      score<-tibble(Type=c("Score","Rank(%)"),
+                    School=c(school_score,school_rank),
+                    Park=c(park_score,park_rank),
+                    Subway=c(subway_score,subway_rank),
+                    Bus=c(bus_score,bus_rank),
+                    Restaurant=c(res_score,res_rank),
+                    Retail=c(retail_score,retail_rank),
+                    Crime=c(crime_score,crime_rank),
+                    Noise=c(noise_score,noise_rank))
+      score})
+      output$near<-renderDataTable({
+        # it's a filter on the nearest houses arranged by score
+        interval<-c(input$range)
+        prange<-c(input$prange)
+        house_sub<-houseallinfo_neighbor%>%
+          filter(Latitude>range[1],Latitude<range[2],Longitude>range[3],Longitude<range[4],
+                 `LAND SQUARE FEET`>=interval[1],`LAND SQUARE FEET`<=interval[2],
+                 `SALE PRICE`>=prange[1],`SALE PRICE`<=prange[2])%>%
+          arrange(desc(as.numeric(total)))%>%
+          select(ADDRESS,`SALE PRICE`,`SALE DATE`,`LAND SQUARE FEET`,`Rank(%)`,`SCHOOL NEARBY`,`PARK NEARBY`,`SUBWAY NEARBY`,`BUS NEARBY`,`RESTAURANT NEARBY`,`RETAIL NEARBY`,`CRIME NEARBY`,`NOISE NEARBY`)%>%
+          head(5)
+        house_sub
+      })
+      output$like<-renderDataTable({
+        # the houses with similar living indexes
+        interval<-c(input$range)
+        prange<-c(input$prange)
+        house_subset<-houseallinfo_neighbor%>%
+          filter(`LAND SQUARE FEET`>=interval[1],`LAND SQUARE FEET`<=interval[2],
+                 `SALE PRICE`>=prange[1],`SALE PRICE`<=prange[2])%>%
+          mutate(school=as.numeric((`SCHOOL NEARBY`-as.numeric(score[1,2]))^2),
+                 park=as.numeric((`PARK NEARBY`-as.numeric(score[1,3]))^2),
+                 subway=as.numeric((`SUBWAY NEARBY`-as.numeric(score[1,4]))^2),
+                 bus=as.numeric((`BUS NEARBY`/2-as.numeric(score[1,5])/2)^2),
+                 resturant=as.numeric((`RESTAURANT NEARBY`/10-as.numeric(score[1,6])/10)^2),
+                 retail=as.numeric((`RETAIL NEARBY`-as.numeric(score[1,7]))^2),
+                 crime=as.numeric((`CRIME NEARBY`/4-as.numeric(score[1,8])/4)^2),
+                 noise=as.numeric((`NOISE NEARBY`/200-as.numeric(score[1,9])/200)^2))%>%
+          mutate(a=school+park+subway+bus+resturant+retail+crime+noise)%>%
+          arrange(a)%>%
+          select(ADDRESS,`SALE PRICE`,`SALE DATE`,`LAND SQUARE FEET`,`Rank(%)`,`SCHOOL NEARBY`,`PARK NEARBY`,`SUBWAY NEARBY`,`BUS NEARBY`,`RESTAURANT NEARBY`,`RETAIL NEARBY`,`CRIME NEARBY`,`NOISE NEARBY`)%>%
+          head(5)
+        house_subset
+      })
+      output$potential<-renderDataTable({
+        house_potential<-houseallinfo_neighbor%>%
+          filter(`LAND SQUARE FEET`>=interval[1],`SALE PRICE`<=prange[1])%>%
+          mutate(school=scale(`SCHOOL NEARBY`),
+                 park=scale(`PARK NEARBY`),
+                 subway=scale(`SUBWAY NEARBY`),
+                 bus=scale(`BUS NEARBY`),
+                 restaurant=scale(`RESTAURANT NEARBY`),
+                 retail=scale(`RETAIL NEARBY`),
+                 crime=scale(`CRIME NEARBY`),
+                 noise=scale(`NOISE NEARBY`))%>%
+          mutate(total=school+park+subway+bus+restaurant+retail-crime-noise)%>%
+          arrange(desc(as.numeric(total)))%>%
+          select(ADDRESS,`SALE PRICE`,`SALE DATE`,`LAND SQUARE FEET`,`Rank(%)`,`SCHOOL NEARBY`,`PARK NEARBY`,`SUBWAY NEARBY`,`BUS NEARBY`,`RESTAURANT NEARBY`,`RETAIL NEARBY`,`CRIME NEARBY`,`NOISE NEARBY`)%>%
+          head(20)
+        house_potential
+      })
+    })
       
       
   })
