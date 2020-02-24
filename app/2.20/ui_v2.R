@@ -64,15 +64,16 @@ shinyUI(
                                     h4("Map"),
                                     p("This page features a browser map. Users can pick from multiple information filters (e.g., bus and subway station, park, restaurant, etc.) to understand the generalized information in their pinpointed areas."),
                                     h6("Recommended for all tenants."),
+                                    h4("Statistics"),
+                                    p("This page features a quick comparison between Manhattan neighborhoods based on the count of non-cost indexes i.e., the number of schools or parks in a particular neighborhood."),
+                                    h6("Recommended for all tenants."),
                                     h4("Recommendation"),
                                     p("This page includes a filtering feature where users can browse the list of houses/properties recommendation based on both cost and non-cost criteria that they choose."),
                                     h6("Recommended for Flexible and Affordable Housing Tenants."),
                                     h4("Evaluation"),
                                     p("This page includes a location search feature where users can type in their prospective address as an input (e.g., school address). The engine will help tenants get a summarized information of residential listings around that address."),
-                                    h6("Recommended for Constrained and Lifestyle Tenants."),
-                                    h4("Statistics"),
-                                    p("This page features a quick comparison between Manhattan neighborhoods based on the count of non-cost indexes i.e., the number of schools or parks in a particular neighborhood."),
-                                    h6("Recommended for all tenants.")
+                                    h6("Recommended for Constrained and Lifestyle Tenants.")
+                                    
                                     
                           )),
                  
