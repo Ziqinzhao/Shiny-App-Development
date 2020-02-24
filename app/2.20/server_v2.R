@@ -214,7 +214,9 @@ shinyServer(function(input, output,session) {
         else hide("retail")
         if("School" %in% input$click_neighbourhood) show("school")
         else hide("school")
-      },ignoreNULL = FALSE) ,
+      },ignoreNULL = FALSE) 
+      
+      
       ## Evaluation
     observeEvent(c(input$caption,input$range,input$prange),{
       # obtaining the longitude and latitude of the address input
