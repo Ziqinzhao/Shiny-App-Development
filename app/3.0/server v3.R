@@ -312,7 +312,51 @@ shinyServer(function(input, output,session) {
       d3heatmap(mat,color = "Blues",Rowv = FALSE,Colv=FALSE,yaxis_font_size = 10,xaxis_font_size = 10)
     })
     
+    observeEvent(c(input$check_neighbor,
+                   input$check_index),{
+                     output$stat_plot <- renderPlotly({
+                       
+                       stat_index <-statistics %>%
+                         filter(NEIGHBORHOOD%in%c(input$check_neighbor))%>%
+                         select(NEIGHBORHOOD,index = input$check_index) %>% 
+                         group_by(NEIGHBORHOOD) %>% summarize(mean = mean(index)) %>%
+                         mutate(mean=round(mean,0))
+                       
+                       stat_index$NEIGHBORHOOD <- factor(stat_index$NEIGHBORHOOD, levels = unique(stat_index$NEIGHBORHOOD[order(stat_index$mean, decreasing = TRUE)]))
+                       stat_plot <- plot_ly (
+                         data = stat_index, x = ~mean, y = ~NEIGHBORHOOD, type = 'bar', orientation = 'h',
+                         marker = list(color = 'rgb(158,202,225)', line = list(color = 'rgb(8,48,107)', width = 1))) %>%
+                         layout(title = "Number of Places/Events by Neighborhood",
+                                xaxis = list(title = ""),
+                                yaxis = list(title = ""),
+                                paper_bgcolor = 'transparent', plot_bgcolor = 'transparent') %>%
+                         layout(autosize = F, width = 1200, height = 400)
+                       
+                       stat_plot
+                     })
+                   })
     
+    observeEvent(c(input$check_neighbor,
+                   input$check_index),{
+                     output$monthly_plot <- renderPlotly({
+                       
+                       monthly_index <-statistics %>% filter(NEIGHBORHOOD%in%c(input$check_neighbor))%>%
+                         select(NEIGHBORHOOD, month, index = input$check_index) %>% group_by(NEIGHBORHOOD) %>%
+                         mutate(index=round(index,0)) 
+                       
+                       monthly_index$month <- as.factor(monthly_index$month)
+            
+                       monthly_plot <- monthly_index %>%
+                         plot_ly(x = ~month, y = ~index, color = ~NEIGHBORHOOD, type = 'bar') %>%
+                         layout(title = "Monthly Number of Places/Events by Neighborhood",
+                                xaxis = list(title = "Month"),
+                                yaxis = list(title = ""),
+                                paper_bgcolor = 'transparent', plot_bgcolor = 'transparent') %>%
+                         layout(autosize = F, width = 1200, height = 400)
+                       
+                       monthly_plot
+                     })
+                   })
     
     ## Evaluation
     observeEvent(c(input$caption,input$range,input$prange),{

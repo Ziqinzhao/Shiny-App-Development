@@ -254,25 +254,26 @@ shinyUI(
                                      dataTableOutput("recom"),style = "color:black")
                             )
                           )),
+                 
                  tabPanel("Statistics",
                           fluidPage(
-                            div(class="outer",
-                                tags$style(type = "text/css", ".outer {position: fixed; top: 41px; left: 0; right: 0; bottom: 0; overflow: hidden; padding: 0}"),
-                                sidebarLayout(
-                                  sidebarPanel(div(id="facilities",
-                                                   selectInput("check_neighbor","NEIGHBORHOOD:", list("UPPER WEST SIDE", "MIDTOWN EAST", "MIDTOWN WEST", 
-                                                                                                      "MAHATTAN NORTH", "LOWER MANHATTAN WEST", "HARLEM", "UPPER EAST SIDE", 
-                                                                                                      "LOWER MANHATTAN EAST", "MIDTOWN CBD", "WASHINGTON HEIGHTS & NORTH", "FINANCIAL DISTRICT"),multiple=TRUE,
-                                                               selected = list("UPPER WEST SIDE", "MIDTOWN EAST", "MIDTOWN WEST", 
-                                                                               "MAHATTAN NORTH", "LOWER MANHATTAN WEST", "HARLEM", "UPPER EAST SIDE", 
-                                                                               "LOWER MANHATTAN EAST", "MIDTOWN CBD", "WASHINGTON HEIGHTS & NORTH", "FINANCIAL DISTRICT")),
-                                                   selectInput("check_index","INDEX TYPE:",list("price","sold","feet","school","park","subway","bus","restaurant","retail","crime","noise"),multiple=FALSE,
-                                                               selected = list("price","sold","feet","school","park","subway","bus","restaurant","retail","crime","noise")))
-                                               ),
-                            mainPanel(d3heatmapOutput ("pic_price"))
-                                )
-                            )
-                          )),
+                            h2("Compare Manhattan Neighborhoods Based on Your Selected Criteria"),
+                            fluidRow(
+                              column(6,pickerInput("check_neighbor","Select the neighborhood(s) you want to examine.", choices = c("UPPER WEST SIDE", "MIDTOWN EAST", "MIDTOWN WEST", 
+                                                                                                                                               "MAHATTAN NORTH", "LOWER MANHATTAN WEST", "HARLEM", "UPPER EAST SIDE", 
+                                                                                                                                               "LOWER MANHATTAN EAST", "MIDTOWN CBD", "WASHINGTON HEIGHTS & NORTH", "FINANCIAL DISTRICT"),options = list(`actions-box` = TRUE),multiple=T,
+                                                               selected = list("UPPER WEST SIDE", "MIDTOWN EAST", "MIDTOWN WEST"),width=600)),
+                              column(6,selectInput("check_index","Select the criteria.",list("price","sold","feet","school","park","subway","bus","restaurant","retail","crime","noise"),multiple=FALSE,
+                                                               selected = list("price","sold","feet","school","park","subway","bus","restaurant","retail","crime","noise")))),
+                              h3("Compare Criteria between Neighborhoods"),
+                              plotlyOutput("stat_plot"),
+                              h3("Compare Trends"),
+                              plotlyOutput("monthly_plot"),
+                              h3("Compare Monthly Price Trend"),
+                              d3heatmapOutput ("pic_price")
+                                  )
+                                ),
+                 
                  tabPanel("Evaluation",
                           fluidPage(
                             fluidRow(
