@@ -1,36 +1,49 @@
-# Project 2: Shiny App Development Version 2.0
+# Project 2 Shiny App Development
+##### Group Project by Shuxin Chen, Junyan Guo, Xiyao Yan, Zhao Ziqin, Marsya Chairuna
 
-### [Project Description](doc/project2_desc.md)
+![App Preview](doc/Readme.png)
 
-![screenshot](doc/View.jpg)
+## Manhattan House Finder
+[Click here to access the shiny app web page](https://zhaoziqin.shinyapps.io/shiny2/)  
+Term: Spring 2020 
 
-In this second project of GR5243 Applied Data Science, we develop a version 2.0 of an *Exploratory Data Analysis and Visualization* shiny app on a topic of your choice using [NYC Open Data](https://opendata.cityofnewyork.us/) or U.S. government open data released on the [data.gov](https://data.gov/) website. See [Project 2 Description](doc/project2_desc.md) for more details.  
+#### Team 3
++ Shuxin Chen
++ Junyan Guo
++ Xiyao Yan
++ Zhao Ziqin
++ Marsya Chairuna
 
-The **learning goals** for this project is:
+#### Project Summary 
+We designed an app to discover sold homes and properties to find customers' ideal homes and properties in Manhattan. This app is designed to help customers benchmark based on discover sold homes for their homes/properties search journey based on the criteria the customers most care about - catered to their lifestyle. The customers can select between cost and non-cost criteria to narrow down their selections: (1) price, (2) square feet, (3) school, (4) park, (5) bus and subway, (6) restaurant, (7) retail, (8) crime, and (9) noise sources. 
 
-- business intelligence for data science
-- study legacy codes and further development
-- data cleaning
-- data visualization
-- systems development/design life cycle
-- shiny app/shiny server
+#### Target Users
+We target four types of customers. Firstly, based on price sensitivity, there are two types of customers: (1) affordable housing and middle-income customers and (2) lifestyle customers. Secondly, based on location flexibility, the two types of customers are (3) flexible customers and (4) constrained customers.
 
-*The above general statement about project 2 can be removed once you are finished with your project. It is optional.
+#### Data Sources  
+All the original data can be downloaded as below.  
+- Housing Data: https://catalog.data.gov/dataset/nyc-citywide-annualized-calendar-sales-update  
+- 311 Compliance Data: https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2010-to-Present/erm2-nwe9  
+- Parks Data: https://data.cityofnewyork.us/City-Government/Parks-Properties/k2ya-ucmv#revert  
+- Traffic-subway Data: https://data.cityofnewyork.us/Transportation/Subway-Stations/arq3-7z49  
+- Traffic-bus Data: http://web.mta.info/developers/developer-data-terms.html#data  
+- Retail data: https://data.ny.gov/Economic-Development/Retail-Food-Stores/9a8c-vfzj  
+- Restaurant Data: https://data.cityofnewyork.us/Health/DOHMH-New-York-City-Restaurant-Inspection-Results/43nn-pn8j  
 
-## Project Title Lorem ipsum dolor sit amet
-Term: Fall 2019
-
-+ Team #3
-+ **Projec title**: + Team members
-	+ team member 1
-	+ team member 2
-	+ team member 3
-	+ team member 4
-	+ team member 5
-
-+ **Project summary**: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-+ **Contribution statement**: ([default](doc/a_note_on_contributions.md)) All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
+#### Contribution Statement  
+All team members contributed in all stages of this project. Every team member carried out data collection and data preprocessing for each type of index (e.g., school, crime, etc.). The details of each member's contribution are as follows: 
+  
+**Shuxin Chen** carried out data collection and data preprocessing for restaurant index. Shuxin Chen was in charge for "Recommendation" tab along with Zhao Ziqin. 
+  
+**Junyan Guo** carried out data collection and data preprocessing for the main housing data and noise index. Junyan Guo was in charge for "Evaluation" tab. He preprocessed the data for Statistics tab. He took the lead in calculating the distances between houses/properties and element of the indexes. He was also in charge of the indexes value calculation. He is also the presenter of the project.  
+  
+**Xiyao Yan** carried out data collection and data preprocessing for park index and traffic index (bus and subway indexes). Xiyao Yan was in charge for "Map" tab and took the lead in developing the Shiny App, creating the UI and server files.   
+  
+**Zhao Ziqin** carried out data collection and data preprocessing for crime and school index. Zhao Ziqin took the lead in embedding the Shiny App to website page.  She was in charge for "Recommendation" tab, along with Shuxin Chen.
+  
+**Marsya Chairuna** carried out data collection and data preprocessing for retail index. Marsya Chairuna was in charge for "Introduction" and "Statistics" tab.  
+  
+All team members approve our work presented in this GitHub repository including this contributions statement. 
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
 
