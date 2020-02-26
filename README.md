@@ -11,7 +11,7 @@ Term: Spring 2020
 + Shuxin Chen
 + Junyan Guo
 + Xiyao Yan
-+ Zhao Ziqin
++ Ziqin Zhao
 + Marsya Chairuna
 
 #### Project Summary 
@@ -37,9 +37,9 @@ All team members contributed in all stages of this project. Every team member ca
   
 **Junyan Guo** carried out data collection and data preprocessing for the main housing data and noise index. Junyan Guo was in charge for "Evaluation" tab. He preprocessed the data for Statistics tab. He took the lead in calculating the distances between houses/properties and element of the indexes. He was also in charge of the indexes value calculation. He is also the presenter of the project.  
   
-**Xiyao Yan** carried out data collection and data preprocessing for park index and traffic index (bus and subway indexes). Xiyao Yan was in charge for "Map" tab and took the lead in developing the Shiny App, creating the UI and server files.   
+**Xiyao Yan** carried out data collection and data preprocessing for park index and traffic index (bus and subway indexes). Xiyao Yan was in charge for "Map" and "Source" tab and took the lead in developing the Shiny App, creating the UI and server files.   
   
-**Zhao Ziqin** carried out data collection and data preprocessing for crime and school index. Zhao Ziqin took the lead in embedding the Shiny App to website page.  She was in charge for "Recommendation" tab, along with Shuxin Chen.
+**Ziqin Zhao** carried out data collection and data preprocessing for crime and school index. Zhao Ziqin took the lead in embedding the Shiny App to website page.  She was in charge for "Recommendation" tab, along with Shuxin Chen.
   
 **Marsya Chairuna** carried out data collection and data preprocessing for retail index. Marsya Chairuna was in charge for "Introduction" and "Statistics" tab.  
   
