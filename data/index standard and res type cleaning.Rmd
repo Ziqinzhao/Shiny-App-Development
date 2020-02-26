@@ -1,0 +1,99 @@
+---
+title: "index filter"
+author: "Ziqin Zhao"
+date: "2/20/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+index_row<-index%>%mutate(row=row_number())
+housing_row<-housing%>%mutate(row=row_number())
+
+index_info<-index_row%>%full_join(housing_row,by=c("row"="row"))%>%select(-Latitude.x,-Longtitude,-ADDRESS.y,
+                                                                          -`SALE PRICE.y`,-row)
+
+school_value<-c(1,2,3) #1= dont care, 2 = care, 3=important!
+
+n=2482
+d1<-max(houseallinfo_neighbor$`SCHOOL NEARBY`)-min(houseallinfo_neighbor$`SCHOOL NEARBY`)
+d2<-max(houseallinfo_neighbor$`RESTAURANT NEARBY`)-min(houseallinfo_neighbor$`RESTAURANT NEARBY`)
+d3<-max(houseallinfo_neighbor$`SUBWAY NEARBY`)-min(houseallinfo_neighbor$`SUBWAY NEARBY`)
+d4=max(houseallinfo_neighbor$`Bus NEARBY`)-min(houseallinfo_neighbor$`Bus NEARBY`)
+d5=max(houseallinfo_neighbor$`PARK NEARBY`)-min(houseallinfo_neighbor$`PARK NEARBY`)
+d6=max(houseallinfo_neighbor$`CRIME NEARBY`)-min(houseallinfo_neighbor$`CRIME NEARBY`)
+d7=max(houseallinfo_neighbor$`NOISE NEARBY`)-min(houseallinfo_neighbor$`NOISE NEARBY`)
+d8=max(houseallinfo_neighbor$`RETAIL NEARBY`)-min(houseallinfo_neighbor$`RETAIL NEARBY`)
+
+
+indexnew_allnew<-houseallinfo_neighbor%>%mutate(school=(houseallinfo_neighbor$`SCHOOL NEARBY`/d1)*3,
+                         res=(houseallinfo_neighbor$`RESTAURANT NEARBY`/d2)*3,
+                         subway=(houseallinfo_neighbor$`SUBWAY NEARBY`/d3)*3,
+                         bus=(houseallinfo_neighbor$`Bus NEARBY`/d4)*3,
+                         park=(houseallinfo_neighbor$`PARK NEARBY`/d5)*3,
+                         crime=(houseallinfo_neighbor$`CRIME NEARBY`/d6)*3,
+                         noise=(houseallinfo_neighbor$`NOISE NEARBY`/d7)*3,
+                         retail=(houseallinfo_neighbor$`RETAIL NEARBY`/d8)*3)%>%
+  mutate(total_value=(school+res+subway+bus+park+crime+noise+retail))
+indexnew_allnew
+
+save(indexnew_allnew,file="/Users/zhaoziqin/Desktop/index_standard_allnew.RData")
+
+indexwtype.2<-indexwtype%>%
+  mutate(total_value = (school+res+subway+bus+park-crime-noise+retail))
+indexwtype.2
+save(indexwtype.2,file="/Users/zhaoziqin/Desktop/indextypeUpdate.RData")
+
+```
+```{r}
+##########    dataclean for res type   ##########
+hou_nest<-housing%>%na.omit()%>%select(c(ADDRESS,Latitude,Longitude))%>%unique%>%mutate(house_id=row_number())%>%rename("house_Longitude"="Longitude","house_Latitude"="Latitude")
+rest<-restaurant%>%mutate(crime_id=row_number())%>%rename("rest_Longitude"="Longitude","rest_Latitude"="Latitude")
+
+type<-rest$`CUISINE DESCRIPTION`%>%unique()%>%sort(na.last =T)
+rest_type<-rest$`CUISINE DESCRIPTION`
+
+hla=hou_nest$house_Latitude
+hlo=hou_nest$house_Longitude
+n=length(hla)
+
+
+rla=rest$rest_Latitude
+rlo=rest$rest_Longitude
+m<-length(rla)
+
+index<-NULL
+for(i in 1:n){
+  type_count<-rep(0,length(type))
+  for(j in 1:m){
+    dist<-distHaversine(c(hlo[i],hla[i]),c(rlo[j],rla[j]),r=6378137)
+    if(dist<800)  {
+      type_count[detect_index(type,~.x==rest_type[j])]=type_count[detect_index(type,~.x==rest_type[j])]+1
+    }
+  }
+  
+  type_tibble<-tibble(type_count[1])
+  names(type_tibble)<-c(type[1])
+  for (k in 2:length(type)){
+    type_tibble<-cbind(type_tibble,tibble(type_count[k]))
+    names(type_tibble)<-c(names(type_tibble)[1:k-1],type[k])
+  }
+  index<-rbind(index,cbind(tibble(house_id=i),type_tibble))
+}
+
+house_rest_type_amount_dis_less_800m<-left_join(hou_nest,index)%>%as_tibble()
+
+
+indexv3_typed<-left_join(indexv3,house_rest_type_amount_dis_less_800m%>%select(-house_id),by=c("ADDRESS"="ADDRESS","Longitude"="house_Longitude","Latitude"="house_Latitude"))
+
+ save(house_rest_type_amount_dis_less_800m,indexv3_typed, file="filter_type.RData")
+
+ register_google(key="AIzaSyAc8ri3JEPeYuHDfqfc4wD1n96RB1YviS4")
+  
+```
+
+
