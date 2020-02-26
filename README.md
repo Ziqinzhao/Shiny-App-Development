@@ -1,5 +1,5 @@
 # Project 2 Shiny App Development
-##### Group Project by Shuxin Chen, Junyan Guo, Xiyao Yan, Zhao Ziqin, Marsya Chairuna
+##### Group Project by Shuxin Chen, Junyan Guo, Xiyao Yan, Ziqin Zhao, Marsya Chairuna
 
 ![App Preview](doc/Readme.png)
 
@@ -39,7 +39,7 @@ All team members contributed in all stages of this project. Every team member ca
   
 **Xiyao Yan** carried out data collection and data preprocessing for park index and traffic index (bus and subway indexes). Xiyao Yan was in charge for "Map" and "Source" tab and took the lead in developing the Shiny App, creating the UI and server files.   
   
-**Ziqin Zhao** carried out data collection and data preprocessing for crime and school index. Zhao Ziqin took the lead in embedding the Shiny App to website page.  She was in charge for "Recommendation" tab, along with Shuxin Chen.
+**Ziqin Zhao** carried out data collection and data preprocessing for crime and school index. Ziqin Zhao took the lead in embedding the Shiny App to website page.  She was in charge for "Recommendation" tab, along with Shuxin Chen.
   
 **Marsya Chairuna** carried out data collection and data preprocessing for retail index. Marsya Chairuna was in charge for "Introduction" and "Statistics" tab.  
   
