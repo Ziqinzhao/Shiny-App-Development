@@ -30,7 +30,7 @@ shinyUI(
                            style = "color: black",
                            
                            h2("Discover sold homes and properties to find your ideal home in Manhattan.", align = "center"),
-                           div(class="header", "Group Project by Shuxin Chen, Junyan Guo, Xiyao Yan, Zhao Ziqin, Marsya Chairuna",align = "center"),
+                           div(class="header", "Group Project by Shuxin Chen, Junyan Guo, Xiyao Yan, Ziqin Zhao, Marsya Chairuna",align = "center"),
                            p(em(a("Github link",href="https://github.com/TZstatsADS/Spring2020-Project2-group3")), align = "center"),
                            p(""),
                            h3("Manhattan House Finder will help you find localize insights on every listing."),
