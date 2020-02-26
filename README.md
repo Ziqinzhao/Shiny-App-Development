@@ -33,7 +33,7 @@ All the original data can be downloaded as below.
 #### Contribution Statement  
 All team members contributed in all stages of this project. Every team member carried out data collection and data preprocessing for each type of index (e.g., school, crime, etc.). The details of each member's contribution are as follows: 
   
-**Shuxin Chen** carried out data collection and data preprocessing for restaurant index. Shuxin Chen was in charge for "Recommendation" tab along with Zhao Ziqin. 
+**Shuxin Chen** carried out data collection and data preprocessing for restaurant index. Shuxin Chen was in charge for "Recommendation" tab along with Ziqin Zhao. 
   
 **Junyan Guo** carried out data collection and data preprocessing for the main housing data and noise index. Junyan Guo was in charge for "Evaluation" tab. He preprocessed the data for Statistics tab. He took the lead in calculating the distances between houses/properties and element of the indexes. He was also in charge of the indexes value calculation. He is also the presenter of the project.  
   
