@@ -17,6 +17,8 @@ Term: Spring 2020
 #### Project Summary 
 We designed an app to discover sold homes and properties to find customers' ideal homes and properties in Manhattan. This app is designed to help customers benchmark based on discover sold homes for their homes/properties search journey based on the criteria the customers most care about - catered to their lifestyle. The customers can select between cost and non-cost criteria to narrow down their selections: (1) price, (2) square feet, (3) school, (4) park, (5) bus and subway, (6) restaurant, (7) retail, (8) crime, and (9) noise sources. 
 
+We manipulated and tranformed over 20GB data, and linked our search bar to Google Map, so a pipeline on recommendation for potential best places of buying houses is created. (Try on the "Search Google Map" bar and type in any of the adderesses or building names in Mahattan, evaluation and recommendation will be provided with shorter dalay.)
+
 #### Target Users
 We target four types of customers. Firstly, based on price sensitivity, there are two types of customers: (1) affordable housing and middle-income customers and (2) lifestyle customers. Secondly, based on location flexibility, the two types of customers are (3) flexible customers and (4) constrained customers.
 
